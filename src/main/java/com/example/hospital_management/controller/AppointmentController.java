@@ -9,6 +9,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.hospital_management.dto.AppointmentRescheduleRequest;
+import com.example.hospital_management.security.AppUserDetails;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 @RestController
 @RequestMapping("/api/appointments")
@@ -19,9 +21,10 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<AppointmentResponse> book(
+            @AuthenticationPrincipal AppUserDetails principal,
             @Valid @RequestBody AppointmentBookRequest request) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(appointmentService.book(request));
+                .body(appointmentService.book(principal.getUserId(), request));
     }
 
     @GetMapping("/{id}")

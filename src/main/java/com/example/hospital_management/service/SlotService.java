@@ -24,15 +24,16 @@ public class SlotService {
     private final DoctorRepository doctorRepository;
 
     @Transactional
-    public SlotResponse create(Long doctorId, SlotCreateRequest request) {
-        Doctor doctor = doctorRepository.findById(doctorId)
-                .orElseThrow(() -> new ResourceNotFoundException("Doctor", doctorId));
+    public SlotResponse create(Long doctorUserId, SlotCreateRequest request) {
+        Doctor doctor = doctorRepository.findByUserId(doctorUserId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Doctor profile for user", doctorUserId));
 
         if (!request.endTime().isAfter(request.startTime())) {
             throw new BadRequestException("End time must be after start time");
         }
 
-        if (slotRepository.existsOverlapping(doctorId, request.startTime(), request.endTime())) {
+        if (slotRepository.existsOverlapping(doctor.getId(), request.startTime(), request.endTime())) {
             throw new DuplicateResourceException(
                     "Doctor already has a slot that overlaps this time");
         }

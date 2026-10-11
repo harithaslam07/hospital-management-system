@@ -28,13 +28,15 @@ public class AppointmentService {
     private final PatientRepository patientRepository;
 
     @Transactional
-    public AppointmentResponse book(AppointmentBookRequest request) {
-        Patient patient = patientRepository.findById(request.patientId())
-                .orElseThrow(() -> new ResourceNotFoundException("Patient", request.patientId()));
+    public AppointmentResponse book(Long patientUserId, AppointmentBookRequest request) {
+        Patient patient = patientRepository.findByUserId(patientUserId)
+                .orElseThrow(() -> new ResourceNotFoundException(
+                        "Patient profile for user", patientUserId));
 
         Slot slot = slotRepository.findByIdForUpdate(request.slotId())
                 .orElseThrow(() -> new ResourceNotFoundException("Slot", request.slotId()));
 
+        // ... everything below this line stays exactly as it was
         if (slot.isBooked()) {
             throw new ConflictException("Slot is already booked");
         }

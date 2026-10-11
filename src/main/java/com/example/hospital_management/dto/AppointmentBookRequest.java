@@ -5,9 +5,6 @@ import jakarta.validation.constraints.Size;
 
 public record AppointmentBookRequest(
 
-        @NotNull(message = "Patient id is required")
-        Long patientId,
-
         @NotNull(message = "Slot id is required")
         Long slotId,
 
